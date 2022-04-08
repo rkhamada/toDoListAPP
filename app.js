@@ -4,14 +4,15 @@ const ejs = require('ejs')
 
 const app = express()
 app.set('view engine', 'ejs');
+app.use(express.static("public"))
 app.use(bodyParser.urlencoded({extended:true}))
-var items = []
+let items = []
 
 
 
-var today = new Date()
-var options = {year: 'numeric', month: 'long', day: 'numeric'}
-var day = today.toLocaleDateString('pt-BR', options)
+let today = new Date()
+let options = {year: 'numeric', month: 'long', day: 'numeric'}
+let day = today.toLocaleDateString('pt-BR', options)
 
 app.get('/', function(req, res){
 
@@ -19,7 +20,7 @@ app.get('/', function(req, res){
 })
 
 app.post('/', function(req,res){
-  var item = req.body.newItem
+  let item = req.body.newItem
   items.push(item)
   res.redirect('/')
 
