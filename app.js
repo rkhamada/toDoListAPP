@@ -1,31 +1,52 @@
 const express = require('express')
 const bodyParser = require('body-parser')
 const ejs = require('ejs')
+const date = require(__dirname + '/date.js')
 
 const app = express()
 app.set('view engine', 'ejs');
-app.use(express.static("public"))
-app.use(bodyParser.urlencoded({extended:true}))
-let items = []
+app.use(bodyParser.urlencoded({
+  extended: true
+}))
+app.use(express.static('public'))
+
+const items = ['buy food', 'cook food', 'eat food']
+const workItems = ['do this', 'do that', 'do all']
 
 
+app.get('/', function(req, res) {
 
-let today = new Date()
-let options = {year: 'numeric', month: 'long', day: 'numeric'}
-let day = today.toLocaleDateString('pt-BR', options)
-
-app.get('/', function(req, res){
-
-  res.render('todolist', {kindOfDay: day, newListItems: items})
+  let day = date.getDate()
+  res.render('todolist', {
+    listTitle: day,
+    newListItems: items
+  })
 })
 
-app.post('/', function(req,res){
+app.post('/', function(req, res) {
+
   let item = req.body.newItem
-  items.push(item)
-  res.redirect('/')
 
+  if (req.body.list === 'Work') {
+    workItems.push(item)
+    res.redirect('/work')
+  } else {
+    items.push(item)
+    res.redirect('/')
+  }
 })
 
-app.listen(3000, function(){
+app.get('/work', function(req, res) {
+  res.render('todolist', {
+    listTitle: 'Work List',
+    newListItems: workItems
+  })
+})
+
+app.get('/about', function(req, res) {
+  res.render('about')
+})
+
+app.listen(3000, function() {
   console.log('server runing on port 3000');
 })
